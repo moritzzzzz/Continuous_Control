@@ -1,11 +1,8 @@
 # Continuous_Control
-DRL-agent using the Deep Deterministic Policy Gradient method
-
-# DeepRL_Banana
-DRL Agent to collect Bananas in Unity environment
+DRL-agent using the Deep Deterministic Policy Gradient (DDPG) method
 
 
-# Project: Navigation in a Banana World
+# Project: Continuous Control
 
 ### Intro
 
@@ -14,31 +11,28 @@ DRL Agent to collect Bananas in Unity environment
 [image1]: https://s3.amazonaws.com/video.udacity-data.com/topher/2018/June/5b1ea778_reacher/reacher.gif "Trained Agent"
 
 
-This projects goal is to utilize Deep Reinforcement Learning (DRL) to train an agent to navigate through 2 dimensional environment and collect yellow bananas, while avoiding to collect blue bananas.
+This projects goal is to utilize Deep Reinforcement Learning (DRL) to train an agent to control 4 joints of a "robotic reach-arm" in order to reach a defined position with its hand.
 
-A trained agent will can be seen in below image: 
+A trained agent will can be seen in below animation, in which the defined position is marked with a green sphere: 
 
 ![Trained Agent][image1]
 
-(source: https://github.com/udacity/deep-reinforcement-learning/blob/master/p1_navigation/README.md)
+(source: https://s3.amazonaws.com/video.udacity-data.com/topher/2018/June/5b1ea778_reacher/reacher.gif)
 
 ### Environment
-In RL the environment defines what the agent will learn. In this case the environment allows the agent to choose between 4 actions in each timesequence:
+In RL the environment defines what the agent will learn. In this case the environment allows the agent to choose the magnitude of 4 dimensionsof its action in each timesequence. The action space is continuous, which poses the essence, as well as the challenge in this project. 
 
-- **`0`** - move forward.
-- **`1`** - move backward.
-- **`2`** - turn left.
-- **`3`** - turn right.
-
-The state space in contrast is not discrete, but continuous and is perceived by the agent in 37 dimensions. (37 continuous input features)
+Also the state space is not discrete, but continuous and is perceived by the agent in 33 dimensions. (33 continuous input features)
 
 The rewards of the environment, which serve as reinforcement for the agent to learn, are assigned when its rules are fullfilled:
 
-A reward of +1 is provided for collecting a yellow banana, and a reward of -1 is provided for collecting a blue banana.  Thereby the agent will learn to avoid blue bananas while collecting yellow bananas.
+A reward of +0.1 is provided each timestep the hand of the reacher is placed in the target sphere. 0 reward if it is not placed inside the target sphere. 
 
-The task is episodic. To solve the problem the average score must exceed +13 for at least 100 episodes.
+The task is episodic. To solve the problem the average score must exceed +30 for at least 100 consecutive episodes.
 
-### How to use this Github repository to train an agent to solve the banana world
+In order to reduce the probability that we end up with an agent that chooses to take actions, that do not lead to fast learning, we 20 run agents simultaneously and average the scores.
+
+### How to use this Github repository to train an agent to control the reacher
 
 The following system prerequisites are required to get it running with my instructions:
 
@@ -59,45 +53,23 @@ The following system prerequisites are required to get it running with my instru
    - pip install -e . .
 - install PyTorch.
     - conda install pytorch torchvision cudatoolkit=9.0 -c pytorch.
-- Get Unity Environment designed for this Banana project.
-   -  Windows (64-bit): [click here](https://s3-us-west-1.amazonaws.com/udacity-drlnd/P1/Banana/Banana_Windows_x86_64.zip).
-    - Place the file in the DRLND GitHub repository, in the `p1_navigation/` folder, and unzip (or decompress) the file. 
+- Get Unity Environment designed for this project.
+   -  Windows (64-bit): [click here](https://s3-us-west-1.amazonaws.com/udacity-drlnd/P2/Reacher/Reacher_Windows_x86_64.zip).
+    - Place the file in the DRLND GitHub repository, in the `p2_continuous_control/` folder, and unzip (or decompress) the file. 
 
 ### Instructions
 
-Follow the instructions in `Navigation.ipynb` to train the agent!
+Follow the instructions in `Continuous_control_solution.ipynb` to train the agent!
 
 ### Expected Result
-After approximately 2600 training episodes the agent will reach the average score of +13, which defines this environment as solved.
-The current model will allow the agent to improve up to an average score of approximately +16, which can be reached after approximately 4500 episodes.
+After approximately 100 training episodes the agent will reach the average score of +30 for 100 consecutive episodes, which defines this environment as solved.
 
+### Techniques utilized
+#### DDPG
+In this project an "actor-critic" DDPG, as defined in [Continuous control with deep reinforcement learning](https://arxiv.org/abs/1509.02971) by Timothy P. Lillicrap et al. was implemented. 
 
-### Learning from Pixels
+#### Improved Exploration
+To improve exploration of this agent stochastic Ornstein-Uhlenbeck was added to the selected action, which lead to an improved learning curve. 
 
-The same goal can also be reached by analyzing an image of what is in front of the agent. This image has a resolution of 84x84 in 3 color channels. So overall dimensions 84x84x3.
-
-There are 2 approaches to this:
-
-#### Easy approach:
-
-Take the same agent and same model (fully connected layers). For this to not overload your memory, the state space needs to be shrinked. 
-84x84x3 = 21168 features. This combined with multiple fully connected layers will consume vast amounts of memory.
-Therefore the central region of the image (state) is cropped and 2 color channels are removed. The result is then flattened to a 1-d vector that can serve as input for the model (of fully connected layers).
-
-#### New approach:
-
-Change the model to use convolutional layers, instead of fully connected layers. Convolutional layers make sense, as we are trying to extract information from image data. Good thing: We only would have to normalize the pixel values, but the dimensions of the image array (state) can be fed without adjustment into the model. Therfore merely the learning function in the Jupyter notebook and the model in model.py would have to be altered.
-
-This should yield a better performance than the easy approach.
-
-Problem: I did not yet implement this second option.
-
-### Instructions to reproduce approach 1
-
-Download a new Unity environment.  This environment is almost identical to the project environment, where the only difference is that the state is an 84 x 84 RGB image, corresponding to the agent's first-person view. 
-
-Windows (64-bit): [click here](https://s3-us-west-1.amazonaws.com/udacity-drlnd/P1/Banana/VisualBanana_Windows_x86_64.zip)
-
-Place the file in the `p1_navigation/` folder in the DRLND GitHub repository, and unzip (or decompress) the file.  Next, open `Navigation_Pixels.ipynb` and follow the instructions to learn how to use the Python API to control the agent.
-
-Follow the instructions in `Navigation_Pixels.ipynb`
+#### Stable Deep Reinforcement Learning(DRL)
+In order to make the DRL agent more stable in regards to auto-correlation of weights adjustments, the "Fixed Q-Targets" method was utilized combined with a "Replay Buffer". We update the target neural networks (NN) wiht a "soft-update" method after each training step. Thereby the target network (see "Fixed Q-targets") is iteratively updated with the weights of trained "regular" NN.

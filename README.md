@@ -20,7 +20,7 @@ A trained agent will can be seen in below animation, in which the defined positi
 (source: https://s3.amazonaws.com/video.udacity-data.com/topher/2018/June/5b1ea778_reacher/reacher.gif)
 
 ### Environment
-In RL the environment defines what the agent will learn. In this case the environment allows the agent to choose the magnitude of 4 dimensionsof its action in each timesequence. The action space is continuous, which poses the essence, as well as the challenge in this project. 
+In RL the environment defines what the agent will learn. In this case the environment allows the agent to choose the magnitude of 4 dimensionsof its action in each timesequence. The action space is continuous, which poses the essence, as well as the challenge in this project. Every action dimension must be in range -1 to 1.
 
 Also the state space is not discrete, but continuous and is perceived by the agent in 33 dimensions. (33 continuous input features)
 
@@ -59,7 +59,7 @@ The following system prerequisites are required to get it running with my instru
 
 ### Instructions
 
-Follow the instructions in `Continuous_control_solution.ipynb` to train the agent!
+Follow the instructions in the Jupyter notebook file `Continuous_control_solution.ipynb` to train the agent!
 
 ### Expected Result
 After approximately 100 training episodes the agent will reach the average score of +30 for 100 consecutive episodes, which defines this environment as solved.

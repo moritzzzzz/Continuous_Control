@@ -59,7 +59,7 @@ The following system prerequisites are required to get it running with my instru
 
 ### Instructions
 
-Follow the instructions in the Jupyter notebook file `Continuous_control_solution.ipynb` to train the agent!
+Follow the instructions in the Jupyter notebook file `Continuous_control.ipynb` to train the agent! For explanations, please see the attached Report_project_2.pdf and the comments in the code of model.py and ddpg_agent.py.
 
 ### Expected Result
 After approximately 100 training episodes the agent will reach the average score of +30 for 100 consecutive episodes, which defines this environment as solved.
